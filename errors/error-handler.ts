@@ -2,6 +2,7 @@ import { UniqueConstraintError } from "sequelize";
 import AppError from "./AppError";
 import logger from "../logger/logger";
 import { NextFunction, Request, Response } from "express";
+import { buildErrorResponse } from "../types/ApiResponse";
 
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     let message = "";
@@ -23,7 +24,5 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         message = err.message;
     }
     logger.error(`[${req.method}] ${req.url} - ${message}`); // binding to winston logging. Change this
-    res.status(status).send({
-        message,
-    });
+    res.status(status).send(buildErrorResponse(message, err));
 };
