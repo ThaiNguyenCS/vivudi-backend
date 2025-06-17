@@ -7,6 +7,7 @@ interface Pagination {
 
 interface PaginatedResponse<T> {
     success: boolean;
+    statusCode: number;
     data: {
         items: T[];
         pagination: Pagination;
@@ -18,6 +19,7 @@ interface PaginatedResponse<T> {
 
 interface NormalResponse<T> {
     success: boolean;
+    statusCode: number;
     data?: T;
     message: string | null;
     error: any;
@@ -27,12 +29,14 @@ export function buildPaginatedResponse<T>(
     items: T[],
     total: number,
     page: number,
-    limit: number
+    limit: number,
+    statusCode: number
 ): PaginatedResponse<T> {
     const totalPages = Math.ceil(total / limit);
 
     return {
         success: true,
+        statusCode,
         data: {
             items,
             pagination: {
@@ -50,10 +54,12 @@ export function buildPaginatedResponse<T>(
 export function buildNormalResponse<T>(
     data: T,
     message: string | null = null,
-    error: any = null
+    error: any = null,
+    statusCode: number
 ): NormalResponse<T> {
     return {
         success: true,
+        statusCode,
         data,
         message,
         error
@@ -62,10 +68,12 @@ export function buildNormalResponse<T>(
 
 export function buildErrorResponse(
     message: string,
-    error: any = null
+    error: any = null,
+    statusCode: number
 ): NormalResponse<null> {
     return {
         success: false,
+        statusCode,
         message,
         error
     };

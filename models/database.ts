@@ -9,6 +9,12 @@ const database = new Sequelize({
     port: parseInt(DB_CONFIG.port!),
     dialect: "postgres",
     benchmark: true,
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
 })
 
 export default database;

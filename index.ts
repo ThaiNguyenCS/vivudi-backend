@@ -4,6 +4,7 @@ import database from './models/database';
 import { PORT } from './config/config';
 import { globalErrorHandler } from './errors/error-handler';
 import cors from 'cors';
+import "reflect-metadata";
 import authRouter from './routes/Auth.route';
 const app = express();
 
@@ -17,7 +18,7 @@ app.use("/api/v1/auth", authRouter);
 
 (async () => {
     try {
-        // await database.authenticate();
+        await database.authenticate();
         console.log('Database connection has been established successfully.');
 
         const server = createServer(app);

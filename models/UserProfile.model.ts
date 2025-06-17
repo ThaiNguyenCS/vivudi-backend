@@ -5,7 +5,7 @@ export const SEXES = {
     MALE: "male",
     FEMALE: "female",
     OTHER: "other"
-}
+} as const;
 
 interface UserAttrs {
     id: string
@@ -21,7 +21,6 @@ interface UserAttrs {
     createdAt: Date
     updatedAt: Date
 }
-
 
 interface UserCreationAttrs extends Optional<UserAttrs, "isVerified" | "avtUrl" | 'updatedAt' | 'createdAt'> { }
 
@@ -56,10 +55,12 @@ User.init(
         lastName: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'last_name'
         },
         firstName: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'first_name'
         },
         sex: {
             type: DataTypes.STRING,
@@ -72,14 +73,17 @@ User.init(
             type: DataTypes.STRING,
             allowNull: true,
             defaultValue: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?semt=ais_hybrid&w=740",
+            field: 'avt_url'
         },
         backgroundUrl: {
             type: DataTypes.STRING,
             allowNull: true,
+            field: 'background_url'
         },
         displayName: {
             type: DataTypes.STRING,
             allowNull: false,
+            field: 'display_name'
         },
         description: {
             type: DataTypes.STRING,
@@ -93,16 +97,19 @@ User.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+            field: 'is_verified'
         },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
+            field: 'created_at'
         },
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
+            field: 'updated_at'
         }
     },
     {

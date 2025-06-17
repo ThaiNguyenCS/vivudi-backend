@@ -8,15 +8,14 @@ export interface AuthenticatedRequest extends Request {
     user?: CustomJwtPayload;
 }
 
-export const validateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const validateToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.header("Authorization")?.split(" ")[1]; // discard the part Bearer
     if (!token) {
         res.status(401).json({ message: "Unauthorized" });
     } else {
         try {
             const decoded = jwt.verify(token, JWT_SECRET_KEY as string) as CustomJwtPayload;
-            req.user = decoded;
-            logger.info("req.user", req.user);
+            (req as AuthenticatedRequest).user = decoded;
             next();
         } catch (error) {
             res.status(401).json({ message: "Invalid token" });
