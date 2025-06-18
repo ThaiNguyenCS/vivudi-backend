@@ -9,6 +9,7 @@ export const SEXES = {
 
 interface UserAttrs {
     id: string
+    authId: string;
     lastName: string;
     firstName: string;
     sex: string;
@@ -18,14 +19,16 @@ interface UserAttrs {
     description: string;
     displayName: string;
     isVerified: boolean;
+    rewardPoints: number;
     createdAt: Date
     updatedAt: Date
 }
 
-interface UserCreationAttrs extends Optional<UserAttrs, "isVerified" | "avtUrl" | 'updatedAt' | 'createdAt'> { }
+interface UserCreationAttrs extends Optional<UserAttrs, "isVerified" | "avtUrl" | 'updatedAt' | 'createdAt' | 'rewardPoints'> { }
 
 class User extends Model<UserAttrs, UserCreationAttrs> implements UserAttrs {
     declare id: string;
+    declare authId: string;
     declare lastName: string;
     declare firstName: string
     declare dob: Date;
@@ -35,6 +38,7 @@ class User extends Model<UserAttrs, UserCreationAttrs> implements UserAttrs {
     declare displayName: string;
     declare isVerified: boolean
     declare sex: string
+    declare rewardPoints: number;
     declare createdAt: Date;
     declare updatedAt: Date;
 }
@@ -45,8 +49,13 @@ User.init(
             type: DataTypes.STRING,
             primaryKey: true,
             allowNull: false,
+        },
+        authId: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            field: 'auth_id',
             references: {
-                model: 'auths', // Assuming the user profile model is named 'users'
+                model: 'auths',
                 key: 'id',
             },
             onDelete: "RESTRICT",
@@ -98,6 +107,12 @@ User.init(
             allowNull: false,
             defaultValue: false,
             field: 'is_verified'
+        },
+        rewardPoints: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+            field: 'reward_points'
         },
         createdAt: {
             type: DataTypes.DATE,
