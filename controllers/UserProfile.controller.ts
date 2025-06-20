@@ -12,7 +12,7 @@ class UserProfileController {
     constructor(
         @inject('UserProfileService')
         private userProfileService: UserProfileService
-    ) {}
+    ) { }
 
     async createProfile(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {

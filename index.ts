@@ -7,6 +7,7 @@ import cors from 'cors';
 import "reflect-metadata";
 import authRouter from './routes/Auth.route';
 import userProfileRouter from './routes/UserProfile.route';
+import postRouter from './routes/Post.route';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user/profile", userProfileRouter);
+app.use("/api/v1/use/feed", postRouter);
 
 (async () => {
     try {

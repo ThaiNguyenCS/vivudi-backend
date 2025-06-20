@@ -23,8 +23,8 @@ class Post extends Model<PostAttrs, PostCreationAttrs> implements PostAttrs {
     declare visibility: string;
     declare longitude: number;
     declare latitude: number;
-    declare createdAt: Date;
-    declare updatedAt: Date;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
     declare isSharedPost: boolean;
     declare originalPostId: string | null;
 }
@@ -91,3 +91,5 @@ Post.init(
         sequelize: database,
         tableName: 'posts',
     })
+
+export default Post;
