@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user/profile", userProfileRouter);
-app.use("/api/v1/use/feed", postRouter);
+app.use("/api/v1/feed", postRouter);
 
 (async () => {
     try {
