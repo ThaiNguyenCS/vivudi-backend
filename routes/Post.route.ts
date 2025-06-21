@@ -10,12 +10,21 @@ router.post("/", validateToken, async (req: Request, res: Response, next: NextFu
   await postController.createPost(req as AuthenticatedRequest, res, next);
 });
 
-router.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
+router.get("/:id", validateToken, async (req: Request, res: Response, next: NextFunction) => {
   await postController.getPostById(req, res, next);
 });
 
 router.get("/", validateToken, async (req: Request, res: Response, next: NextFunction) => {
   await postController.getAllPosts(req as AuthenticatedRequest, res, next);
 });
+
+router.put("/:id", validateToken, async (req: Request, res: Response, next: NextFunction) => {
+  await postController.updatePost(req as AuthenticatedRequest, res, next);
+});
+
+router.delete("/:id", validateToken, async (req: Request, res: Response, next: NextFunction) => {
+  await postController.deletePost(req as AuthenticatedRequest, res, next);
+});
+
 
 export default router; 

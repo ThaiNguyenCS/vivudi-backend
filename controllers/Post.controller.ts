@@ -2,9 +2,9 @@ import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authenticate.middleware";
 import PostService from "../services/PostService";
 import { inject, injectable } from "tsyringe";
-import { createPostSchema } from "../validators/post.validator";
+import { createPostSchema, updatePostSchema } from "../validators/post.validator";
 import { buildErrorResponse, buildNormalResponse } from "../types/ApiResponse";
-import { createPostStatusCode, GetPostStatusCode } from "../statusCodes/postStatusCode";
+import { createPostStatusCode, DeletePostStatusCode, GetPostStatusCode, UpdatePostStatusCode } from "../statusCodes/postStatusCode";
 import { not, string } from "joi/lib";
 import AppError from "../errors/AppError";
 
@@ -42,6 +42,38 @@ class PostController {
 
     async updatePost(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
+            // const { error } = updatePostSchema.validate(req.body)
+            // if (error) {
+            //     return res.json(buildErrorResponse(
+            //         UpdatePostStatusCode.INVALID_DATA.message,
+            //         error.details[0].message,
+            //         UpdatePostStatusCode.INVALID_DATA.code,
+            //     ))
+            // }
+            const dto = {
+                content: req.body.content,
+                visibility: req.body.visibility,
+                longitude: req.body.longitude ? parseFloat(req.body.longitude) : undefined,
+                latitude: req.body.latitude ? parseFloat(req.body.latitude) : undefined,
+                isSharedPost: req.body.is_shared_post,
+                originalPostId: req.body.org_post_url
+            };
+            const postId = req.params.id;
+            const result = await this.postService.updatePost(postId, dto);
+            if (!result) {
+                return res.json(buildErrorResponse(
+                    UpdatePostStatusCode.POST_NOT_FOUND.message,
+                    null,
+                    UpdatePostStatusCode.POST_NOT_FOUND.code
+                ))
+            }
+
+            return res.json(buildNormalResponse(
+                result,
+                UpdatePostStatusCode.SUCCESS.message,
+                null,
+                UpdatePostStatusCode.SUCCESS.code,
+            ))
         } catch (error) {
             next(error)
         }
@@ -49,15 +81,32 @@ class PostController {
 
     async deletePost(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
+            const postId = req.params.id;
+            const deleted = await this.postService.deletePost(postId);
+
+            if (!deleted) {
+            return res.json(buildErrorResponse(
+                DeletePostStatusCode.POST_NOT_FOUND.message,
+                null,
+                DeletePostStatusCode.POST_NOT_FOUND.code
+            ));
+            }
+
+            return res.json(buildNormalResponse(
+            null,
+            null,
+            DeletePostStatusCode.SUCCESS.message,
+            DeletePostStatusCode.SUCCESS.code
+            ));
         } catch (error) {
-            next(error)
+            next(error);
         }
-    }
+}
 
     async getPostById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
-            const postId = req.params.id
-            const result = this.postService.getPostById(postId)
+            const postId = req.params.id;
+            const result =  await this.postService.getPostById(postId);
 
             if (!result) {
                 return res.json(buildErrorResponse(
