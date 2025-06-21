@@ -4,7 +4,7 @@
     "main": "index.ts",
     "scripts": {
         "dev": "cross-env NODE_ENV=dev nodemon index.ts",
-        "prod": "cross-env NODE_ENV=prod nodemon index.ts",
+        "prod": "cross-env NODE_ENV=production nodemon index.ts",
         "test": "jest"
     },
     "keywords": [],
