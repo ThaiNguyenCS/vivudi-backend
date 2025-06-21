@@ -47,7 +47,6 @@ class PostService {
     }
     catch (error) {
       throw new AppError(500, error as string)
-
     }
   }
 
@@ -56,9 +55,35 @@ class PostService {
       return await this.postRepository.getAll(page, limit)
     }
     catch (error) {
-
+      throw new AppError(500, error as string)
     }
   }
+
+  async updatePost(id: string, data: {
+    content?: string;
+    visibility?: string;
+    longitude?: number;
+    latitude?: number;
+    isSharedPost?: boolean;
+    originalPostId?: string | null;
+  }){
+    try {
+      return await this.postRepository.update(id, data);
+    }
+    catch (error) {
+      throw new AppError(500, error as string)
+    }
+  }
+
+  async deletePost(postId: string) {
+  try {
+    const deleted = await this.postRepository.delete(postId);
+    return deleted; 
+  } catch (error) {
+    throw new AppError(500, error instanceof Error ? error.message : 'Unknown error');
+  }
+  }
+
 }
 
 export default PostService;

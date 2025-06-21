@@ -3,6 +3,7 @@ import Post from '../models/Post.model';
 import PasswordReset from '../models/PasswordReset.model';
 import { StatusCodes, StatusMessages } from '../statusCodes/databaseStatusCode';
 import AppError from '../errors/AppError';
+import { UpdatePostStatusCode } from '../statusCodes/postStatusCode';
 
 @injectable()
 class PostRepository {
@@ -111,6 +112,70 @@ class PostRepository {
       );
     }
   }
+
+  async update(postId: string, updateData: {
+    content?: string;
+    visibility?: string;
+    longitude?: number;
+    latitude?: number;
+    isSharedPost?: boolean;
+    originalPostId?: string | null;
+  }){
+    try{
+      //chuan bi object de update
+      const data: any = {};
+      if (updateData.content !== undefined) data.content = updateData.content;
+      if (updateData.visibility !== undefined) data.visibility = updateData.visibility;
+      if (updateData.longitude !== undefined) data.longitude = updateData.longitude;
+      if (updateData.latitude !== undefined) data.latitude = updateData.latitude;
+
+      //neu la bai chia se thi phai co originalPostId
+      if (updateData.isSharedPost !== undefined) {
+      if (updateData.isSharedPost && !updateData.originalPostId) {
+        throw new AppError(
+          UpdatePostStatusCode.BAD_REQUEST.code,
+          'originalPostId is required when isSharedPost = true'
+        );
+      }
+      data.isSharedPost = updateData.isSharedPost;
+      data.originalPostId = updateData.originalPostId ?? null;
+    }
+
+     const [rowsAffected, [updatedPost]] = await Post.update(data, {
+      where: { id: postId },
+      returning: true,      
+      individualHooks: true     
+    });
+
+     if (rowsAffected === 0) {
+      throw new AppError(
+        UpdatePostStatusCode.POST_NOT_FOUND.code, UpdatePostStatusCode.POST_NOT_FOUND.message
+      );
+    }
+    return updatedPost;
+  }
+    catch(error){
+      throw new AppError(
+        StatusCodes.DATABASE_ERROR,
+        `Error creating user: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
+
+  async delete(postId: string) {
+  try {
+    const deletedRows = await Post.destroy({
+      where: { id: postId }
+    });
+
+    return deletedRows > 0;
+  } catch (error) {
+    throw new AppError(
+      StatusCodes.DATABASE_ERROR,
+      `Error deleting post: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+}
 
 
   // async updatePassword(email: string, hashedPassword: string) {
