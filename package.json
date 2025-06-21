@@ -4,8 +4,9 @@
     "main": "index.ts",
     "scripts": {
         "dev": "cross-env NODE_ENV=dev nodemon index.ts",
-        "prod": "cross-env NODE_ENV=production nodemon index.ts",
-        "test": "jest"
+        "prod": "npm run build && cross-env NODE_ENV=production node dist/index.js",
+        "test": "jest",
+        "build": "tsc"
     },
     "keywords": [],
     "author": "",
