@@ -54,20 +54,23 @@ class AuthService {
 
     async login(email: string, password: string) {
         // Validate input
-        if (!email || !password) {
-            throw new AppError(LoginStatus.MISSING_CREDENTIALS.code, LoginStatus.MISSING_CREDENTIALS.message);
+        if (!email) {
+            throw new AppError(LoginStatus.MISSING_EMAIL.code, LoginStatus.MISSING_EMAIL.message);
+        }
+        if (!password) {
+            throw new AppError(LoginStatus.MISSING_PASSWORD.code, LoginStatus.MISSING_PASSWORD.message);
         }
 
         // Find user by email
         const user = await this.authRepository.findByEmail(email);
         if (!user) {
-            throw new AppError(LoginStatus.INVALID_CREDENTIALS.code, LoginStatus.INVALID_CREDENTIALS.message);
+            throw new AppError(LoginStatus.EMAIL_NOT_REGISTERED.code, LoginStatus.EMAIL_NOT_REGISTERED.message);
         }
 
         // Verify password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
-            throw new AppError(LoginStatus.INVALID_CREDENTIALS.code, LoginStatus.INVALID_CREDENTIALS.message);
+            throw new AppError(LoginStatus.WRONG_PASSWORD.code, LoginStatus.WRONG_PASSWORD.message);
         }
 
         // Generate JWT token with id, email, and role
@@ -183,7 +186,7 @@ class AuthService {
         // Find user by ID
         const user = await this.authRepository.findById(userId);
         if (!user) {
-            throw new AppError(LoginStatus.INVALID_CREDENTIALS.code, LoginStatus.INVALID_CREDENTIALS.message);
+            throw new AppError(LoginStatus.EMAIL_NOT_REGISTERED.code, LoginStatus.EMAIL_NOT_REGISTERED.message);
         }
 
         if (!user.password) {

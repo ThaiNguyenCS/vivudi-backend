@@ -28,13 +28,21 @@ export const LoginStatus = {
         code: 0,
         message: "Login successfully"
     },
-    INVALID_CREDENTIALS: {
+    EMAIL_NOT_REGISTERED: {
         code: 100,
-        message: "Invalid email or password"
+        message: "Email is not registered"
     },
-    MISSING_CREDENTIALS: {
+    MISSING_EMAIL: {
         code: 101,
-        message: "Missing email or password"
+        message: "Missing email"
+    },
+    WRONG_PASSWORD: {
+        code: 102,
+        message: "Wrong password"
+    },
+    MISSING_PASSWORD: {
+        code: 103,
+        message: "Missing password"
     }
 } as const;
 

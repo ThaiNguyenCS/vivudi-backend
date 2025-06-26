@@ -63,17 +63,25 @@ class AuthController {
         try {
             const { error, value } = loginSchema.validate(req.body);
             if (error) {
-                const status = error.details[0].message.includes('email') 
-                    ? LoginStatus.INVALID_CREDENTIALS 
-                    : LoginStatus.MISSING_CREDENTIALS;
-                
-                return res.json(
-                    buildErrorResponse(
-                        status.message,
-                        error.details[0].message,
-                        status.code
-                    )
-                );
+                // Nếu thiếu email thì trả về MISSING_EMAIL, thiếu password thì trả về MISSING_PASSWORD
+                const msg = error.details[0].message.toLowerCase();
+                if (msg.includes('email')) {
+                    return res.json(
+                        buildErrorResponse(
+                            LoginStatus.MISSING_EMAIL.message,
+                            error.details[0].message,
+                            LoginStatus.MISSING_EMAIL.code
+                        )
+                    );
+                } else if (msg.includes('password')) {
+                    return res.json(
+                        buildErrorResponse(
+                            LoginStatus.MISSING_PASSWORD.message,
+                            error.details[0].message,
+                            LoginStatus.MISSING_PASSWORD.code
+                        )
+                    );
+                }
             }
 
             const result = await this.authService.login(
