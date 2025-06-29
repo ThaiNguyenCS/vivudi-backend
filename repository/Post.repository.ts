@@ -3,6 +3,8 @@ import Post from '../models/Post.model';
 import PasswordReset from '../models/PasswordReset.model';
 import { StatusCodes, StatusMessages } from '../statusCodes/databaseStatusCode';
 import AppError from '../errors/AppError';
+import Media from '../models/Media.model';
+import '../models/Associactions_Post_Media.model';
 
 @injectable()
 class PostRepository {
@@ -88,7 +90,15 @@ class PostRepository {
   async getPostById(postId: string) {
     try {
 
-      return await Post.findOne({ where: { id: postId } });
+      return await Post.findOne({
+        include: [
+          {
+            model: Media,
+            attributes: ['url', 'type']
+          }
+        ],
+        where: { id: postId }
+      });
 
     } catch (error) {
       throw new AppError(
@@ -102,7 +112,14 @@ class PostRepository {
   async getAll(page: number, limit: number) {
     try {
 
-      return await Post.findAll();
+      return await Post.findAll({
+        include: [
+          {
+            model: Media,
+            attributes: ['url', 'type']
+          }
+        ]
+      });
 
     } catch (error) {
       throw new AppError(

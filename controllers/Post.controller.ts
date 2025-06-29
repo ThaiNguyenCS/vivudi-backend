@@ -5,18 +5,28 @@ import { inject, injectable } from "tsyringe";
 import { createPostSchema } from "../validators/post.validator";
 import { buildErrorResponse, buildNormalResponse } from "../types/ApiResponse";
 import { createPostStatusCode, GetPostStatusCode } from "../statusCodes/postStatusCode";
-import { not, string } from "joi/lib";
+import { any, not, string } from "joi/lib";
 import AppError from "../errors/AppError";
+import { authorize, uploadFile } from "../services/Google.service";
+import { time } from "console";
+import { v4 as uuidv4 } from 'uuid';
+import MediaService from "../services/MediaService";
+import { url } from "inspector";
 
 @injectable()
 class PostController {
     constructor(
-        @inject('PostService')
-        private postService: PostService
+        @inject('PostService') private postService: PostService,
+        @inject('MediaService') private mediaService: MediaService
     ) { }
 
     async createPost(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
+            if (req.files !== undefined) {
+                console.log(req.files)
+            }
+            console.log(req.body)
+
             const { error, value } = createPostSchema.validate(req.body)
             if (error) {
                 return res.json(buildErrorResponse(
@@ -27,8 +37,31 @@ class PostController {
             }
 
             const result = await this.postService.creatPost(req.user?.id, req.body)
+
+            let imagesInfo = []
+            if (Array.isArray(req.files) && req.files.length > 0) {
+                console.log(req.files)
+                const auth = await authorize()
+                for (var file of req.files) {
+                    const fileName = `${result.data.id}_${uuidv4()}`
+                    let res = await uploadFile(file.buffer, auth, fileName, file.mimetype)
+
+                    const mediaData = {
+                        id: uuidv4(),
+                        postId: result.data.id,
+                        type: "image",
+                        url: res.webContentLink?.split('&')[0] as string
+                    }
+                    this.mediaService.createMedia(mediaData)
+                    imagesInfo.push(res)
+                }
+            }
+            const payload = {
+                ...result.data,
+                images: imagesInfo
+            }
             return res.json(buildNormalResponse(
-                result.data,
+                payload,
                 createPostStatusCode.SUCCESS.message,
                 null,
                 createPostStatusCode.SUCCESS.code,
@@ -57,20 +90,23 @@ class PostController {
     async getPostById(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
             const postId = req.params.id
-            const result = this.postService.getPostById(postId)
+            const result = await this.postService.getPostById(postId)
+
 
             if (!result) {
                 return res.json(buildErrorResponse(
-                    GetPostStatusCode.USER_NOT_FOUND.message,
+                    GetPostStatusCode.POST_NOT_FOUND.message,
                     null,
-                    GetPostStatusCode.USER_NOT_FOUND.code
+                    GetPostStatusCode.POST_NOT_FOUND.code
                 ))
             }
-
+            const payload = {
+                ...result.dataValues,
+            }
             return res.json(buildNormalResponse(
-                result,
-                null,
+                payload,
                 GetPostStatusCode.SUCCESS.message,
+                null,
                 GetPostStatusCode.SUCCESS.code
             ))
 
@@ -85,11 +121,12 @@ class PostController {
             const limit = req.query["limit"] ? parseInt(req.query["limit"] as string) : 5
             const result = await this.postService.getAllPost(page, limit)
 
+
             if (!result) {
                 return res.json(buildErrorResponse(
-                    GetPostStatusCode.USER_NOT_FOUND.message,
+                    GetPostStatusCode.POST_NOT_FOUND.message,
                     null,
-                    GetPostStatusCode.USER_NOT_FOUND.code
+                    GetPostStatusCode.POST_NOT_FOUND.code
                 ))
             }
 
@@ -106,3 +143,5 @@ class PostController {
 }
 
 export default PostController;
+
+

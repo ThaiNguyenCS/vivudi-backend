@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user/profile", userProfileRouter);
 app.use("/api/v1/feed", postRouter);
-
+app.use("/api/v1/callback", (req, res) => { console.log(req.query.code); res.json(req.query.code); });
 (async () => {
     try {
         await database.authenticate();

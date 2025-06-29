@@ -4,15 +4,16 @@ export const createPostStatusCode = {
     message: "Create post successfully"
   },
 
-
   INVALID_DATA: {
     code: 100,
     message: "Invalid post data"
   },
+
   USER_NOT_FOUND: {
     code: 101,
     message: "User not found"
   }
+
 }
 
 export const GetPostStatusCode = {
@@ -25,8 +26,9 @@ export const GetPostStatusCode = {
     code: 100,
     message: "Invalid post data"
   },
-  USER_NOT_FOUND: {
+
+  POST_NOT_FOUND: {
     code: 101,
-    message: "User not found"
+    message: "Post not found"
   }
 }

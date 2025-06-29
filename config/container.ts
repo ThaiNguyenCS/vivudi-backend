@@ -12,6 +12,8 @@ import UserProfileRepository from '../repository/UserProfile.repository';
 import PostController from '../controllers/Post.controller';
 import PostService from '../services/PostService';
 import PostRepository from '../repository/Post.repository';
+import MediaService from '../services/MediaService';
+import MediaRepository from '../repository/Media.repository';
 // Register repositories
 container.register('AuthRepository', {
     useClass: AuthRepository
@@ -23,6 +25,10 @@ container.register('UserProfileRepository', {
 
 container.register('PostRepository', {
     useClass: PostRepository
+});
+
+container.register('MediaRepository', {
+    useClass: MediaRepository
 });
 // Register services
 container.register('AuthService', {
@@ -39,6 +45,10 @@ container.register('UserProfileService', {
 
 container.register('PostService', {
     useClass: PostService
+});
+
+container.register('MediaService', {
+    useClass: MediaService
 });
 
 // Register controllers
