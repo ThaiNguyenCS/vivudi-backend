@@ -5,8 +5,7 @@ import UserProfileRepository from '../repository/UserProfile.repository';
 import AppError from "../errors/AppError";
 import { v4 as uuidv4 } from 'uuid';
 import { createPostStatusCode } from "../statusCodes/postStatusCode";
-import mime from "mime-types"
-import { any } from "joi/lib";
+
 @injectable()
 class PostService {
 	constructor(
