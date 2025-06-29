@@ -7,6 +7,7 @@ import { RegisterStatus, LoginStatus, ForgotPasswordStatus, VerifyOTPStatus, Res
 import AuthRepository from '../repository/Auth.repository';
 import EmailService from './EmailService';
 import { generateOTP, generateUUID } from '../utils/genEmail';
+import UserProfileService from './UserProfileService';
 
 @injectable()
 class AuthService {
@@ -14,7 +15,9 @@ class AuthService {
         @inject('AuthRepository')
         private authRepository: AuthRepository,
         @inject('EmailService')
-        private emailService: EmailService
+        private emailService: EmailService,
+        @inject('UserProfileService')
+        private userProfileService: UserProfileService
     ) {}
 
     async register(email: string, phoneNumber: string, password: string) {
@@ -45,6 +48,10 @@ class AuthService {
             phoneNumber,
             password: hashedPassword
         });
+
+        // Create empty user profile
+        await this.userProfileService.createEmptyProfile(user.id);
+
         return {
             statusCode: RegisterStatus.SUCCESS.code,
             message: RegisterStatus.SUCCESS.message,

@@ -11,6 +11,37 @@ class UserProfileService {
         private userProfileRepository: UserProfileRepository
     ) {}
 
+    async createEmptyProfile(userId: string) {
+        // Check if user exists
+        const user = await this.userProfileRepository.findUserById(userId);
+        if (!user) {
+            throw new AppError(CreateProfileStatus.USER_NOT_FOUND.code, CreateProfileStatus.USER_NOT_FOUND.message);
+        }
+
+        // Check if profile already exists
+        const existingProfile = await this.userProfileRepository.findByUserId(userId);
+        if (existingProfile) {
+            throw new AppError(CreateProfileStatus.PROFILE_EXISTS.code, CreateProfileStatus.PROFILE_EXISTS.message);
+        }
+
+        // Create profile with unique ID and auth ID from token
+        await this.userProfileRepository.create({
+            id: uuidv4(),
+            authId: userId,
+            firstName: '',
+            lastName: '',
+            sex: 'other',
+            dob: new Date(0),
+            displayName: `user_${userId.substring(0, 8)}`,
+        });
+
+        return {
+            statusCode: CreateProfileStatus.SUCCESS.code,
+            message: CreateProfileStatus.SUCCESS.message,
+            data: null
+        };
+    }
+
     async createProfile(userId: string, profileData: {
         firstName: string;
         lastName: string;
@@ -27,7 +58,7 @@ class UserProfileService {
             throw new AppError(CreateProfileStatus.USER_NOT_FOUND.code, CreateProfileStatus.USER_NOT_FOUND.message);
         }
 
-        // Check if profile already exists
+        // Check if profile already exists. Throw an error if an empty profile already exists
         const existingProfile = await this.userProfileRepository.findByUserId(userId);
         if (existingProfile) {
             throw new AppError(CreateProfileStatus.PROFILE_EXISTS.code, CreateProfileStatus.PROFILE_EXISTS.message);
