@@ -28,3 +28,17 @@ export const DB_CONFIG = {
     port: process.env.DB_PORT,
     ssl: process.env.DB_SSL,
 };
+
+export const CREDENTIAL_DRIVE = {
+    access_token: process.env.ACCESS_TOKEN,
+    scope: process.env.SCOPE,
+    token_type: process.env.TOKEN_TYPE,
+    expiry_date: Number(process.env.EXPIRY_DATE)
+}
+
+export const O2AUTH = {
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
+    redirect_uris: process.env.REDIRECT_URI,
+}
+
