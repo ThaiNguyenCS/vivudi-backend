@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { google } from 'googleapis';
-import mime from 'mime-types';
 import Stream from 'stream';
 import { O2AUTH, CREDENTIAL_DRIVE } from '../config/config';
 
