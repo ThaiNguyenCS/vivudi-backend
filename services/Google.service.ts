@@ -78,4 +78,3 @@ export async function uploadFile(buffer: Buffer, auth: any, fileName: string, mi
 	return res.data
 }
 
-authorize()
